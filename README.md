@@ -1,46 +1,95 @@
-# Sovrano Distributions Website
+# SovWeb-2.0
 
-Official website of Sovrano Distributions - premium alcohol and gastronomy distributor in Armenia.
+Next.js 15 runtime for the redesigned Sovrano website.
 
-## Features
+This repository no longer uses legacy HTML as the active UI. The current runtime lives at repo root and renders the website from structured legacy content sources in `reports/`, with a new motion-driven interface built on React, Tailwind, Framer Motion, GSAP, and Lenis.
 
-- 🌐 **Multi-language**: Support for English, Russian, and Armenian languages
-- 🍷 **Alcohol Brands**: Nemiroff, Gancia, Broom Gin, Muja Irish Whiskey, Valhalla and others
-- 🍫 **Gastronomy Brands**: Caputo, Delverde, Garofalo, Sacla, Sterilgarda, Virgilio
-- 📱 **Responsive Design**: Optimized for all devices
-- ⚡ **Fast Loading**: Optimized images and resources
+## Stack
 
-## Project Structure
+- Next.js 15 App Router
+- React 19
+- Tailwind CSS 4
+- Framer Motion
+- GSAP + ScrollTrigger
+- Lenis
+- TypeScript
 
+## What Is Inside
+
+- Cinematic homepage and internal page runtime
+- Locale-aware content rendering for English, Armenian, and Russian
+- Structured adapters over legacy content manifests in `reports/`
+- Safe cleanup/parity tooling for migrated legacy content
+- Portable local runner plus PowerShell wrappers
+
+## Local Development
+
+Install dependencies and start the portable local server:
+
+```bash
+npm install
+npm run runLocal
 ```
-sovrano.am/
-├── index.html              # Main page (English)
-├── ru/                     # Russian version
-├── hy/                     # Armenian version
-├── our-partners/           # Partners page
-├── about-us/               # About us
-├── contact-us/             # Contact us
-├── wp-content/             # WordPress content
-├── logo-g/                 # Gastronomy brand logos
-└── [brand-pages]/          # Brand pages
+
+Default local URL:
+
+```text
+http://localhost:3000
 ```
 
-## Technical Details
+If your PowerShell profile is loaded, you can also use:
 
-- **CMS**: WordPress with Elementor
-- **Theme**: Astra
-- **Plugins**: Elementor Pro, Royal Elementor Addons, WPML
-- **Languages**: English, Русский, Հայերեն
+```powershell
+devNew
+```
 
-## Gastronomy Brands Status
+`devNew` runs the same repo-controlled Next.js workflow and prefers `http://sovrano.am:80`.
 
-All gastronomy brand links are disabled (`javascript:void(0)`) - clicking on "Read More" or brand images does nothing.
+## Common Commands
 
-## Deployment
+```bash
+npm run runLocal
+npm run build
+npm run lint
+npm run prove:legacy-parity
+npm run cleanup:safe
+```
 
-The website is ready for deployment on any web hosting with PHP and MySQL support.
+PowerShell helpers:
 
-## Contacts
+```powershell
+devNew
+pushNew "your commit message"
+depSov
+```
 
-- **Email**: info@sovrano.am
-- **Website**: https://sovrano.am
+- `pushNew` pushes to this repository
+- `depSov` remains the Cloudflare deploy helper
+
+## Content And Cleanup
+
+The migrated runtime keeps `reports/` and runtime-served assets as source-of-truth.
+
+Legacy cleanup and parity artifacts:
+
+- `docs/legacy-parity-checklist.md`
+- `docs/legacy-parity-report.json`
+- `docs/safe-cleanup-inventory.md`
+- `_archive/safe-cleanup-20260413/manifest.json`
+
+## Important Notes
+
+- Legacy HTML is no longer the active runtime
+- Root runtime is production-oriented Next.js, not WordPress
+- Cleanup should only run after a green parity report
+
+## Docs
+
+- `QUICK_START.md`
+- `README_COMMANDS.md`
+- `RUNBOOK.md`
+
+## Website
+
+- Production: [https://sovrano.am](https://sovrano.am)
+- Repository: [https://github.com/shaburyaan/SovWeb-2.0](https://github.com/shaburyaan/SovWeb-2.0)
