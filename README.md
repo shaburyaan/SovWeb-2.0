@@ -55,17 +55,6 @@ npm run prove:legacy-parity
 npm run cleanup:safe
 ```
 
-PowerShell helpers:
-
-```powershell
-devNew
-pushNew "your commit message"
-depSov
-```
-
-- `pushNew` pushes to this repository
-- `depSov` remains the Cloudflare deploy helper
-
 ## Content And Cleanup
 
 The migrated runtime keeps `reports/` and runtime-served assets as source-of-truth.
