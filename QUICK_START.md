@@ -1,59 +1,46 @@
-# ⚡ Sovrano Website - Quick Start
+# Sovrano Quick Start
 
-## 🚀 Быстрые команды (работают из любой директории!)
-
-### Просмотр справки
-```powershell
-sovHelp
-```
-
-### Локальная разработка
-```powershell
-devSov                              # Запуск на http://localhost:8000
-```
-
-### Публикация изменений
-```powershell
-pushSov "Описание изменений"        # Push в GitHub
-depSov                              # Деплой на Cloudflare → sovrano.am
-```
-
----
-
-## 📝 Типичный workflow
+## Local Dev
 
 ```powershell
-# 1. Тест локально
-devSov
-# → Открыть http://localhost:8000
-# → Проверить изменения
-# → Ctrl+C для остановки
-
-# 2. Публикация
-pushSov "Update: улучшена главная страница"
-depSov
-
-# ✅ Готово! Сайт обновлен на https://sovrano.am
+npm install
+npm run runLocal
 ```
 
----
+Default: `http://localhost:3000`
 
-## 🔗 Ссылки
+## Sovrano Wrapper
 
-- 🌐 **Продакшн**: https://sovrano.am
-- 📦 **GitHub**: https://github.com/shaburyaan/sovrano-website
-- ☁️ **Cloudflare**: https://dash.cloudflare.com/pages/sovrano-website
-- 💻 **Локально**: http://localhost:8000
+```powershell
+devNew
+```
 
----
+`devNew` now calls the repo Next.js runner and starts dev on `http://sovrano.am:80`.
 
-## 💡 Подсказки
+## Git Push
 
-- Все команды работают из **любой** директории PowerShell
-- `pushSov` без параметра использует дефолтное сообщение
-- `devSov` нужен Python (обычно уже установлен)
-- После `pushSov` подождите ~30 сек, затем `depSov`
+```powershell
+pushNew "your message"
+```
 
----
+`pushNew` pushes to [SovWeb-2.0](https://github.com/shaburyaan/SovWeb-2.0).
 
-**Полная документация:** `README_COMMANDS.md`
+## Validation
+
+```powershell
+npm run prove:legacy-parity
+npm run lint
+npm run build
+```
+
+## Cleanup
+
+```powershell
+npm run cleanup:safe
+```
+
+Requires a green `prove:legacy-parity` report first.
+
+## Docs
+
+See `README_COMMANDS.md`.

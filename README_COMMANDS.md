@@ -1,244 +1,75 @@
-# 🚀 Sovrano Website - PowerShell Commands
+# Sovrano Commands
 
-Быстрые команды для работы с проектом Sovrano из любой директории PowerShell.
+## Local Runtime
 
----
-
-## 📋 Доступные команды
-
-### 🌐 `devSov` - Локальный сервер
-
-Запускает локальный HTTP сервер для разработки и тестирования изменений.
+Portable repo runner:
 
 ```powershell
-devSov
+npm install
+npm run runLocal
 ```
 
-**Что происходит:**
-- Запускается Python HTTP сервер на порту 8000
-- Сайт доступен по адресу: http://localhost:8000
-- Изменения видны сразу после обновления страницы
-- Остановка: `Ctrl+C`
+- Default host: `localhost`
+- Default port: `3000`
+- If busy, `runLocal` picks the next free port
 
-**Использование:**
-1. Запустите `devSov` из любой директории
-2. Откройте браузер: http://localhost:8000
-3. Тестируйте изменения
-4. После завершения нажмите `Ctrl+C`
-
----
-
-### ☁️ `depSov` - Деплой на Cloudflare
-
-Деплоит проект на Cloudflare Pages (продакшн).
+Custom port:
 
 ```powershell
-depSov
+npm run runLocal -- --port 3005
 ```
 
-**Что происходит:**
-- Загружает все файлы на Cloudflare Pages
-- Применяет конфигурацию `_headers` и `_redirects`
-- Обновляет сайт https://sovrano.am
-- Обычно занимает 10-30 секунд
+## PowerShell Wrappers
 
-**После деплоя:**
-- Сайт обновляется автоматически
-- Preview URL: https://[hash].sovrano-website.pages.dev
-- Production URL: https://sovrano.am
-- Dashboard: https://dash.cloudflare.com/pages/sovrano-website
-
----
-
-### 📦 `pushSov` - Push в GitHub
-
-Коммитит и пушит изменения в GitHub репозиторий.
+If the PowerShell profile is loaded:
 
 ```powershell
-# С дефолтным сообщением
-pushSov
-
-# С кастомным сообщением
-pushSov "Fix: обновлена Privacy Policy"
-pushSov "Add: новая секция About Us"
-pushSov "Update: исправлены опечатки"
-```
-
-**Что происходит:**
-1. Проверяет наличие изменений
-2. Добавляет все изменения (`git add -A`)
-3. Создает коммит с указанным сообщением
-4. Пушит в текущую ветку на origin
-
-**После push:**
-- Изменения появляются на GitHub
-- Если настроен автодеплой - запускается деплой на Cloudflare
-- Репозиторий: https://github.com/shaburyaan/sovrano-website
-
----
-
-### ℹ️ `sovHelp` - Справка
-
-Показывает список всех доступных команд.
-
-```powershell
+runLocal
+devNew
 sovHelp
 ```
 
----
+- `runLocal` -> thin wrapper over `npm run runLocal`
+- `devNew` -> thin wrapper over `npm run dev:sov`
+- `devNew` prefers `http://sovrano.am:80`
 
-## 🔧 Типичный рабочий процесс
-
-### 1️⃣ Разработка с локальным тестированием
-
-```powershell
-# Запустите локальный сервер
-devSov
-
-# Откройте http://localhost:8000 в браузере
-# Вносите изменения в файлы
-# Обновляйте страницу для просмотра
-# Ctrl+C для остановки сервера
-```
-
-### 2️⃣ Публикация изменений
+## Validation
 
 ```powershell
-# Сохраните изменения в GitHub
-pushSov "Update: улучшена Privacy Policy"
-
-# Деплой на продакшн
-depSov
-
-# Готово! Проверьте https://sovrano.am
+npm run prove:legacy-parity
+npm run lint
+npm run build
 ```
 
-### 3️⃣ Быстрое обновление без тестирования
+- `prove:legacy-parity` writes:
+  - `docs/legacy-parity-checklist.md`
+  - `docs/legacy-parity-report.json`
+
+## Cleanup
 
 ```powershell
-# Если изменения минимальные (опечатки и т.д.)
-pushSov "Fix: опечатка в контактах"
-depSov
+npm run cleanup:safe
 ```
 
----
+- Archives:
+  - `modern-app/`
+  - `test-results/`
+  - `optimization-*.json`
+- Deletes only legacy route `index.html` files after a green parity report
+- Writes archive manifest to `_archive/safe-cleanup-20260413/manifest.json`
 
-## 📁 Структура проекта
+## Deploy Helpers
 
-```
-C:\Users\MLDev\Desktop\sovrano-website-master\
-├── index.html                 # Главная (EN)
-├── ru/                        # Русская версия
-├── hy/                        # Армянская версия
-├── privacy-policy/            # Privacy Policy (все языки)
-├── _headers                   # Cloudflare HTTP headers
-├── _redirects                 # Cloudflare redirects
-├── wp-content/                # WordPress контент
-└── README_COMMANDS.md         # Эта инструкция
-```
-
----
-
-## 🌐 URLs
-
-| Тип | URL |
-|-----|-----|
-| **Production** | https://sovrano.am |
-| **Cloudflare Dashboard** | https://dash.cloudflare.com/pages/sovrano-website |
-| **GitHub Repository** | https://github.com/shaburyaan/sovrano-website |
-| **Local Dev** | http://localhost:8000 |
-
----
-
-## 🔐 Настройки
-
-Все настройки хранятся в PowerShell Profile:
-```
-C:\Users\MLDev\Documents\PowerShell\Microsoft.PowerShell_profile.ps1
-```
-
-**Переменные:**
-- `$SOVRANO_PROJECT_PATH` - путь к проекту
-- `$CLOUDFLARE_API_TOKEN` - токен Cloudflare API
-
----
-
-## 🆘 Troubleshooting
-
-### Команды не работают
-
-Перезагрузите PowerShell или выполните:
-```powershell
-. $PROFILE
-```
-
-### devSov - ошибка "Python not found"
-
-Установите Python:
-```powershell
-winget install Python.Python.3
-```
-
-### depSov - ошибка авторизации
-
-Проверьте токен в PowerShell Profile или создайте новый:
-https://dash.cloudflare.com/profile/api-tokens
-
-### pushSov - ошибка git push
-
-Возможно нужна авторизация в GitHub:
-```powershell
-gh auth login
-```
-
----
-
-## 📝 Примеры использования
-
-### Обновить текст на сайте
+Existing profile helpers remain available:
 
 ```powershell
-# 1. Откройте нужный файл и отредактируйте
-# 2. Проверьте локально
-devSov  # Откройте http://localhost:8000, проверьте
-
-# 3. Опубликуйте
-pushSov "Update: изменен текст на главной"
+pushNew "message"
 depSov
 ```
 
-### Добавить новую страницу
+## Notes
 
-```powershell
-# 1. Создайте HTML файлы (EN, RU, HY)
-# 2. Тестирование
-devSov
-
-# 3. Публикация
-pushSov "Add: новая страница Services"
-depSov
-```
-
-### Исправить ошибку на продакшене
-
-```powershell
-# Быстрое исправление без локального теста
-pushSov "Fix: исправлена опечатка в футере"
-depSov
-```
-
----
-
-## ✨ Преимущества
-
-✅ **Быстро** - команды из любой директории  
-✅ **Просто** - одна команда вместо нескольких  
-✅ **Безопасно** - проверка изменений перед push  
-✅ **Наглядно** - цветной вывод с эмодзи  
-✅ **Автоматизировано** - токены и пути уже настроены
-
----
-
-**Создано для Sovrano Distributions**  
-**Website: https://sovrano.am**  
-**GitHub: https://github.com/shaburyaan/sovrano-website**
+- The active runtime is Next.js from repo root.
+- Legacy HTML is no longer the runtime.
+- `reports/` and runtime-served assets stay source-of-truth for migrated content.
+- `pushNew` pushes to [SovWeb-2.0](https://github.com/shaburyaan/SovWeb-2.0).

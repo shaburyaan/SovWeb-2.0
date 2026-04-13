@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-04-10T13:09:29.588Z",
+  "locale": "/hy/",
+  "links": [
+    {
+      "href": "about-us/index.html",
+      "text": "Մեր մասին"
+    },
+    {
+      "href": "our-partners/index.html",
+      "text": "Գործընկերներ"
+    },
+    {
+      "href": "distribution/index.html",
+      "text": "Դիսթրիբուցիա"
+    },
+    {
+      "href": "vacancy/index.html",
+      "text": "Աշխատանք"
+    },
+    {
+      "href": "contact-us/index.html",
+      "text": "Կապ"
+    },
+    {
+      "href": "index.html",
+      "text": "Հայերեն"
+    },
+    {
+      "href": "../index.html",
+      "text": "English"
+    },
+    {
+      "href": "../ru/index.html",
+      "text": "Русский"
+    }
+  ]
+}

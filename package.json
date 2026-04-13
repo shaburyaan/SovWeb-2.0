@@ -1,16 +1,44 @@
 {
-  "name": "sovrano-image-compression",
+  "name": "sovrano-website",
   "version": "1.0.0",
-  "description": "Image compression script for Sovrano website",
-  "main": "compress-images.js",
+  "description": "Cinematic Sovrano runtime",
+  "private": true,
   "scripts": {
-    "compress": "node compress-images.js"
+    "dev": "next dev",
+    "runLocal": "node scripts/run-local.mjs",
+    "dev:sov": "node scripts/run-local.mjs --mode=sovrano --fallback-port 3000",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "compress": "node compress-images.js",
+    "prove:legacy-parity": "node scripts/prove-legacy-parity.mjs",
+    "cleanup:safe": "node scripts/safe-cleanup.mjs"
   },
   "dependencies": {
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.38.0",
+    "gsap": "^3.14.2",
     "imagemin": "^8.0.1",
+    "imagemin-gifsicle": "^7.0.0",
     "imagemin-mozjpeg": "^10.0.0",
     "imagemin-pngquant": "^9.0.2",
-    "imagemin-gifsicle": "^7.0.0",
-    "imagemin-webp": "^7.0.0"
+    "imagemin-webp": "^7.0.0",
+    "lenis": "^1.3.21",
+    "next": "^15.5.15",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5",
+    "split-type": "^0.3.4",
+    "tailwind-merge": "^3.5.0"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3.3.5",
+    "@tailwindcss/postcss": "^4.2.2",
+    "@types/node": "^20.19.39",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^15.5.15",
+    "tailwindcss": "^4.2.2",
+    "typescript": "^5.9.3"
   }
 }

@@ -1,0 +1,38 @@
+{
+  "generatedAt": "2026-04-10T13:09:29.582Z",
+  "locale": "/",
+  "links": [
+    {
+      "href": "about-us/index.html",
+      "text": "About us"
+    },
+    {
+      "href": "our-partners/index.html",
+      "text": "Our Partners"
+    },
+    {
+      "href": "distribution/index.html",
+      "text": "Distribution"
+    },
+    {
+      "href": "vacancy/index.html",
+      "text": "Vacancy"
+    },
+    {
+      "href": "contact-us/index.html",
+      "text": "Contact Us"
+    },
+    {
+      "href": "index.html",
+      "text": "English"
+    },
+    {
+      "href": "hy/index.html",
+      "text": "Հայերեն"
+    },
+    {
+      "href": "ru/index.html",
+      "text": "Русский"
+    }
+  ]
+}
