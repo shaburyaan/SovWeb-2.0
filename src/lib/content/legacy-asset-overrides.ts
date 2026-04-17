@@ -5,15 +5,12 @@ import type { LegacyBlock } from "./types";
 const routeAssetOverrides: Record<string, { primary?: string; accent?: string }> = {
   "/": {
     primary: "/homepage/01.jpg",
-    accent: "/homepage/03.JPG",
   },
   "/hy/": {
     primary: "/homepage/01.jpg",
-    accent: "/homepage/03.JPG",
   },
   "/ru/": {
     primary: "/homepage/01.jpg",
-    accent: "/homepage/03.JPG",
   },
   "/vacancy/": {
     primary: "/homepage/03.JPG",

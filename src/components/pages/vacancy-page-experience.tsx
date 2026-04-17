@@ -5,6 +5,7 @@ import { PageHero } from "@/components/pages/page-hero";
 import { getRoutePrimaryAsset } from "@/lib/content/legacy-asset-overrides";
 import { getVacancySections } from "@/lib/content/page-scenes";
 import type { GenericPageData } from "@/lib/content/page";
+import { getOptimizedAssetSrc } from "@/lib/optimized-media";
 
 export function VacancyPageExperience({ data }: { data: GenericPageData }) {
   const vacancy = getVacancySections(data);
@@ -17,7 +18,7 @@ export function VacancyPageExperience({ data }: { data: GenericPageData }) {
           eyebrow="Vacancy"
           title={vacancy.jobTitle}
           body={data.description}
-          imageSrc={getRoutePrimaryAsset(data.route) || data.heroImage}
+          imageSrc={getOptimizedAssetSrc(getRoutePrimaryAsset(data.route) || data.heroImage)}
         />
         <NarrativeScene kicker="Position" title="Open role narrative" items={vacancy.sections.slice(0, 2)} />
         <NarrativeScene kicker="Details" title="Responsibilities and qualifications" items={vacancy.sections.slice(2)} />

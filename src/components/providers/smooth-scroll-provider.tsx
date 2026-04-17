@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { usePathname } from "next/navigation";
 import Lenis from "lenis";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
@@ -8,8 +9,16 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 export function SmoothScrollProvider({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
   useEffect(() => {
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const isHomeLocale = pathname === "/" || pathname === "/hy" || pathname === "/ru";
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+    const saveData =
+      (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData ?? false;
+
+    if (isHomeLocale || reduceMotion || coarsePointer || saveData) {
       return;
     }
 
@@ -24,7 +33,17 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     const update = (time: number) => {
       lenis.raf(time * 1000);
     };
-    const syncScroll = () => ScrollTrigger.update();
+    let syncFrame = 0;
+    const syncScroll = () => {
+      if (syncFrame) {
+        return;
+      }
+
+      syncFrame = window.requestAnimationFrame(() => {
+        syncFrame = 0;
+        ScrollTrigger.update();
+      });
+    };
     const refresh = () => lenis.resize();
 
     lenis.on("scroll", syncScroll);
@@ -34,11 +53,16 @@ export function SmoothScrollProvider({ children }: { children: React.ReactNode }
     ScrollTrigger.refresh();
 
     return () => {
+      if (syncFrame) {
+        window.cancelAnimationFrame(syncFrame);
+      }
+
       ScrollTrigger.removeEventListener("refresh", refresh);
+      lenis.off("scroll", syncScroll);
       lenis.destroy();
       gsap.ticker.remove(update);
     };
-  }, []);
+  }, [pathname]);
 
   return <>{children}</>;
 }

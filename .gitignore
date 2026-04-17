@@ -54,6 +54,8 @@ typings/
 
 # next.js build output
 .next
+out/
+test-results/
 
 # Nuxt.js build output
 .nuxt
@@ -99,3 +101,16 @@ Thumbs.db
 # Logs
 logs
 *.log
+
+# Local visual/perf artifacts
+artifacts/
+page-bg/
+*-before.png
+*-after-*.png
+*-static*.png
+devsov-*.png
+perf-*.png
+*-homepass.png
+*-perf-pass.png
+*-rollback-pass.png
+*fullpage*.png

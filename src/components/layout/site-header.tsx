@@ -1,4 +1,5 @@
-import { Magnetic } from "@/components/motion/magnetic";
+import Image from "next/image";
+
 import { TransitionLink } from "@/components/navigation/transition-link";
 import type { LegacyNavLink } from "@/lib/content/types";
 
@@ -14,17 +15,22 @@ export function SiteHeader({ nav }: SiteHeaderProps) {
     <header className="site-header">
       <div className="site-header__inner">
         <TransitionLink href="/" className="site-logo" cursorLabel="Open">
-          <span className="site-logo__label">Sovrano</span>
-          <span className="site-logo__subline">Distributions</span>
+          <Image
+            src="/optimized-media/homepage/Sovrano Main Logo 1.webp"
+            alt="Sovrano Distributions"
+            className="site-logo__image"
+            width={640}
+            height={280}
+            priority
+            sizes="(max-width: 800px) 34vw, 10rem"
+          />
         </TransitionLink>
 
         <nav className="site-nav" aria-label="Primary">
           {primary.map((item) => (
-            <Magnetic key={`${item.href}-${item.text}`} as="span" className="site-nav__magnetic">
-              <TransitionLink href={item.href} className="site-nav__link" cursorLabel="Open">
-                {item.text}
-              </TransitionLink>
-            </Magnetic>
+            <TransitionLink key={`${item.href}-${item.text}`} href={item.href} className="site-nav__link" cursorLabel="Open">
+              {item.text}
+            </TransitionLink>
           ))}
         </nav>
 

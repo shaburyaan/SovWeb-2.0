@@ -5,7 +5,8 @@ import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Image from "next/image";
 
-import { cn, normalizeAssetSrc } from "@/lib/utils";
+import { getOptimizedAssetSrc } from "@/lib/optimized-media";
+import { cn } from "@/lib/utils";
 
 gsap.registerPlugin(ScrollTrigger);
 
@@ -29,12 +30,19 @@ export function ParallaxMedia({
   sizes = "(max-width: 800px) 100vw, 33vw",
 }: ParallaxMediaProps) {
   const ref = useRef<HTMLDivElement | null>(null);
-  const normalizedSrc = normalizeAssetSrc(src);
+  const normalizedSrc = getOptimizedAssetSrc(src);
 
   useEffect(() => {
     const element = ref.current;
+    const saveData =
+      (navigator as Navigator & { connection?: { saveData?: boolean } }).connection?.saveData ?? false;
 
-    if (!element || !parallax || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    if (
+      !element ||
+      !parallax ||
+      saveData ||
+      window.matchMedia("(prefers-reduced-motion: reduce), (pointer: coarse)").matches
+    ) {
       return;
     }
 
@@ -58,7 +66,7 @@ export function ParallaxMedia({
           trigger: element,
           start: "top bottom",
           end: "bottom top",
-          scrub: 0.35,
+          scrub: 0.8,
         },
       },
     );

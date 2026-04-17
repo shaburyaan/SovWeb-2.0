@@ -41,6 +41,14 @@ npm run cleanup:safe
 
 Requires a green `prove:legacy-parity` report first.
 
+## Deploy
+
+```powershell
+depSov
+```
+
+`depSov` builds the static Pages output and deploys `out/` to Cloudflare.
+
 ## Docs
 
 See `README_COMMANDS.md`.

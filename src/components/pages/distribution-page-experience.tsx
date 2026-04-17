@@ -43,7 +43,14 @@ export function DistributionPageExperience({ data }: { data: GenericPageData }) 
                     {card.body}
                   </RevealText>
                 </div>
-                <ParallaxMedia src={card.imageSrc} alt={card.title} className="distribution-scene__media" />
+                <ParallaxMedia
+                  src={card.imageSrc}
+                  alt={card.title}
+                  className="distribution-scene__media"
+                  fit="contain"
+                  parallax={false}
+                  sizes="(max-width: 1100px) 100vw, 46vw"
+                />
               </article>
             ))}
           </div>

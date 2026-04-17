@@ -1,0 +1,1 @@
+Cleanup only: removed confirmed non-runtime junk (`artifacts/`, `page-bg/`, root screenshot PNGs, root duplicate logo, `_archive/`) and extended `.gitignore` for local visual/perf artifacts. Kept `app/`, `src/`, `public/`, `reports/`, scripts, manifests, and source `wp-content/` intact.

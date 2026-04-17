@@ -2,7 +2,6 @@
 
 import { useMemo, useState } from "react";
 
-import { Magnetic } from "@/components/motion/magnetic";
 import { ParallaxMedia } from "@/components/motion/parallax-media";
 import { RevealText } from "@/components/motion/reveal-text";
 import { ScrollScene } from "@/components/motion/scroll-scene";
@@ -49,17 +48,16 @@ export function PartnersTabsExperience({
 
         <div className="partners-page-scene__tabs" data-scene-item>
           {model.filters.map((filter) => (
-            <Magnetic key={filter.slug} as="div">
-              <button
-                type="button"
-                className="partners-page-scene__tab"
-                data-active={filter.slug === activeTab}
-                data-cursor-label="View"
-                onClick={() => setActiveTab(filter.slug)}
-              >
-                {filter.label}
-              </button>
-            </Magnetic>
+            <button
+              key={filter.slug}
+              type="button"
+              className="partners-page-scene__tab"
+              data-active={filter.slug === activeTab}
+              data-cursor-label="View"
+              onClick={() => setActiveTab(filter.slug)}
+            >
+              {filter.label}
+            </button>
           ))}
         </div>
 
@@ -70,9 +68,9 @@ export function PartnersTabsExperience({
             className="partners-page-scene__typing"
             speed={28}
           />
-          <RevealText key={`${activeTab}-body`} as="p" className="partners-page-scene__active-body" mode="words">
+          <p key={`${activeTab}-body`} className="partners-page-scene__active-body">
             {activeBody}
-          </RevealText>
+          </p>
           <div className="partners-page-scene__active-tags">
             {visibleCards.slice(0, 4).map((card) => (
               <span key={`${activeTab}-${card.title}`} className="partners-page-scene__tag">
@@ -104,12 +102,12 @@ export function PartnersTabsExperience({
                 parallax={false}
                 sizes="(max-width: 800px) 100vw, (max-width: 1100px) 50vw, 24vw"
               />
-              <RevealText as="h3" className="partners-page-scene__card-title" mode="words">
+              <h3 className="partners-page-scene__card-title">
                 {card.title}
-              </RevealText>
-              <RevealText as="p" className="partners-page-scene__card-body" mode="words">
+              </h3>
+              <p className="partners-page-scene__card-body">
                 {card.body}
-              </RevealText>
+              </p>
               <TransitionLink href={card.href} className="media-scene__card-link" cursorLabel="View">
                 {card.label}
               </TransitionLink>

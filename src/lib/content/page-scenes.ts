@@ -1,4 +1,6 @@
-import { normalizeRoute } from "@/lib/utils";
+import optimizedMediaManifest from "@/lib/optimized-media-manifest.json";
+import { normalizeAssetSrc, normalizeRoute } from "@/lib/utils";
+import { getOptimizedAssetSrc } from "@/lib/optimized-media";
 
 import type { GenericPageData } from "./page";
 import { getBackgroundAssetFromBlocks, getRoutePrimaryAsset } from "./legacy-asset-overrides";
@@ -30,11 +32,17 @@ export type PartnerCategory = {
   cards: PartnerCard[];
 };
 
+export type PartnerLogo = {
+  src: string;
+  alt: string;
+};
+
 export type PartnersPageModel = {
   lead: string;
   filters: Array<{ slug: string; label: string }>;
   categories: PartnerCategory[];
   allCards: PartnerCard[];
+  logos: PartnerLogo[];
 };
 
 type SupplementalPartnerEntry = {
@@ -210,6 +218,19 @@ const supplementalPartners: SupplementalPartnerEntry[] = [
   },
 ];
 
+const optimizedMediaKeys = Object.keys(optimizedMediaManifest as Record<string, string>);
+const partnerLogoAliases: Record<string, string[]> = {
+  bezhitsky: ["bezhickiy"],
+  gjdistillers: ["g j distillers"],
+  louersvodka: ["lauers", "lauersvodka"],
+  marksevouni: ["marksevani"],
+  millennium: ["millenium"],
+  pyatozer: ["pyatozyor", "fivelakes"],
+  russianstandard: ["russtandart", "russkiystandart"],
+  sacla: ["scala"],
+  whitebirchbelayaberezka: ["whitebirch", "belayaberezka"],
+};
+
 function cleanText(value: string) {
   return value
     .replace(/<[^>]+>/g, " ")
@@ -245,6 +266,101 @@ function normalizeLookupName(value: string) {
 
 function longestText(first: string, second: string) {
   return second.length > first.length ? second : first;
+}
+
+function extractSlug(href: string) {
+  return href.split("/").filter(Boolean).at(-1) ?? "";
+}
+
+function getPartnerLogoTokens(title: string, href: string) {
+  const normalizedTitle = normalizeLookupName(title);
+  const normalizedSlug = normalizeLookupName(extractSlug(href));
+  const titleAliases = partnerLogoAliases[normalizedTitle] ?? [];
+  const slugAliases = partnerLogoAliases[normalizedSlug] ?? [];
+
+  return Array.from(new Set([normalizedTitle, normalizedSlug, ...titleAliases, ...slugAliases].filter(Boolean)));
+}
+
+function isPreferredPartnerLogoPath(src: string) {
+  return src.startsWith("/logo-g/") || src.startsWith("/logo/");
+}
+
+function isFallbackPartnerLogoPath(src: string) {
+  return /^\/wp-content\/uploads\/(2022\/11|2022\/12|2025\/04)\//i.test(src);
+}
+
+function scorePartnerLogoCandidate(src: string, tokens: string[], fallbackSrc: string) {
+  const normalizedSrc = normalizeLookupName(src);
+  const normalizedFallback = normalizeAssetSrc(fallbackSrc);
+  let score = 0;
+
+  if (src.startsWith("/logo-g/")) {
+    score += 80;
+  } else if (src.startsWith("/logo/")) {
+    score += 70;
+  } else if (/^\/wp-content\/uploads\/2025\/04\//i.test(src)) {
+    score += 45;
+  } else if (/^\/wp-content\/uploads\/2022\/12\//i.test(src)) {
+    score += 35;
+  } else if (/^\/wp-content\/uploads\/2022\/11\//i.test(src)) {
+    score += 28;
+  }
+
+  if (/logo/i.test(src)) {
+    score += 14;
+  }
+
+  if (/background|product|hero/i.test(src)) {
+    score -= 45;
+  }
+
+  if (normalizedFallback === src) {
+    score += 4;
+  }
+
+  for (const token of tokens) {
+    if (!token) continue;
+    if (normalizedSrc.endsWith(token)) {
+      score += 28;
+      continue;
+    }
+
+    if (normalizedSrc.includes(token)) {
+      score += 12;
+    }
+  }
+
+  return score;
+}
+
+function resolvePartnerLogoSrc(title: string, href: string, fallbackSrc: string) {
+  const tokens = getPartnerLogoTokens(title, href);
+  const normalizedFallback = normalizeAssetSrc(fallbackSrc);
+  const candidates = optimizedMediaKeys
+    .filter((src) => (isPreferredPartnerLogoPath(src) || isFallbackPartnerLogoPath(src)) && tokens.some((token) => normalizeLookupName(src).includes(token)))
+    .sort((first, second) => scorePartnerLogoCandidate(second, tokens, normalizedFallback) - scorePartnerLogoCandidate(first, tokens, normalizedFallback));
+
+  return getOptimizedAssetSrc(candidates[0] ?? normalizedFallback);
+}
+
+function buildPartnerLogos(cards: PartnerCard[]) {
+  const uniqueLogos = new Map<string, PartnerLogo>();
+
+  for (const card of cards) {
+    if (!card.imageSrc) {
+      continue;
+    }
+
+    const key = `${card.title}::${card.imageSrc}`;
+    if (!uniqueLogos.has(key)) {
+      uniqueLogos.set(key, {
+        src: card.imageSrc,
+        alt: card.title,
+      });
+    }
+  }
+
+  return [...uniqueLogos.values()];
 }
 
 function dedupePartnerCards(cards: PartnerCard[]) {
@@ -283,15 +399,15 @@ function buildSupplementalPartnerCards(data: GenericPageData, existingCards: Par
       const route = data.localeBase === "/" ? `/${entry.slug}/` : `${data.localeBase}/${entry.slug}/`;
       const page = getLegacyPage(route);
       const href = page
-        ? data.localeBase === "/" ? `/en/${entry.slug}` : `${data.localeBase}/${entry.slug}`
+        ? data.localeBase === "/" ? `/${entry.slug}` : `${data.localeBase}/${entry.slug}`
         : `${data.route.replace(/\/$/, "")}#${entry.slug}`;
-      const imageSrc =
+      const rawImageSrc =
         imageByAlt.get(normalizeLookupName(entry.imageAlt)) ??
         page?.images?.[0]?.src ??
         data.heroImage;
 
       return {
-        imageSrc,
+        imageSrc: resolvePartnerLogoSrc(entry.title, href, rawImageSrc),
         title: entry.title,
         body: entry.body,
         href,
@@ -371,12 +487,14 @@ function extractPartnerCardsFromHtml(html: string, route: string, localeBase: Ge
 
       let href = normalizeRoute(hrefMatch[1], route);
       if (localeBase === "/" && /^\/[a-z0-9-]+$/i.test(href)) {
-        href = `/en${href}`;
+        href = href;
       }
 
+      const title = cleanText(ariaMatch?.[1] ?? "") || titleFromSlug(href);
+
       return {
-        imageSrc: srcMatch[1],
-        title: cleanText(ariaMatch?.[1] ?? "") || titleFromSlug(href),
+        imageSrc: resolvePartnerLogoSrc(title, href, srcMatch[1]),
+        title,
         body: cleanText(excerptMatch?.[1] ?? ""),
         href,
         label: cleanText(labelMatch?.[1] ?? "") || "Read More",
@@ -390,7 +508,7 @@ function extractPartnerCardsFromHtml(html: string, route: string, localeBase: Ge
 
 function extractGalleryCardsFromHtml(html: string, fallbackAlt: string) {
   return [...html.matchAll(/<img[^>]+src="([^"]+)"[^>]*alt="([^"]*)"/gi)].map((match) => ({
-    src: match[1],
+    src: getOptimizedAssetSrc(match[1]),
     alt: cleanText(match[2]) || fallbackAlt,
   }));
 }
@@ -421,7 +539,7 @@ export function getBrandDetailModel(data: GenericPageData): BrandDetailModel {
   const galleryBlock = productHeadingIndex >= 0 ? data.rawBlocks.slice(productHeadingIndex + 1).find((block) => /<img/i.test(block.html)) : null;
   const galleryFromBlock = galleryBlock ? extractGalleryCardsFromHtml(galleryBlock.html, introHeadings[0] ?? data.title) : [];
   const galleryFromImages = data.rawImages.slice(1).map((image) => ({
-    src: image.src,
+    src: getOptimizedAssetSrc(image.src),
     alt: cleanText(image.alt ?? "") || introHeadings[0] || data.title,
   }));
   const productGallery = (galleryFromBlock.length ? galleryFromBlock : galleryFromImages).filter(
@@ -434,12 +552,13 @@ export function getBrandDetailModel(data: GenericPageData): BrandDetailModel {
     title: introHeadings[0] ?? data.title,
     subtitle: introHeadings[1] ?? "",
     body: introBodies.join(" ").trim() || data.description,
-    heroImage: data.rawImages[0]?.src ?? data.heroImage,
-    backdropImage:
+    heroImage: getOptimizedAssetSrc(data.rawImages[0]?.src ?? data.heroImage),
+    backdropImage: getOptimizedAssetSrc(
       getBackgroundAssetFromBlocks(data.rawBlocks) ||
       getRoutePrimaryAsset(data.route) ||
       data.rawImages[0]?.src ||
       data.heroImage,
+    ),
     productHeading,
     productGallery,
     overviewGallery: productGallery.slice(0, 3),
@@ -492,6 +611,7 @@ export function getPartnersPageModel(data: GenericPageData): PartnersPageModel {
     filters: finalFilters,
     categories,
     allCards,
+    logos: buildPartnerLogos(allCards),
   };
 }
 
@@ -534,7 +654,7 @@ export function getAboutSections(data: GenericPageData) {
     advantages: narratives.slice(2),
     stats,
     gallery: images.map((item) => ({
-      src: item.src,
+      src: getOptimizedAssetSrc(item.src),
       alt: item.alt,
     })),
     cta: buttons[0] ?? null,
@@ -560,7 +680,7 @@ export function getDistributionCards(data: GenericPageData): DistributionCard[] 
       cards.push({
         title: item.value,
         body: body.value,
-        imageSrc: image.src,
+        imageSrc: getOptimizedAssetSrc(image.src),
       });
     }
   }

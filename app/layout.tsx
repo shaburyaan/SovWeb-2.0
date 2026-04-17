@@ -1,19 +1,20 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Inter_Tight } from "next/font/google";
+import { Noto_Sans_Armenian, Roboto } from "next/font/google";
 
 import { RootExperience } from "@/components/providers/root-experience";
 
 import "./globals.css";
 
-const sans = Inter_Tight({
+const sans = Roboto({
   variable: "--font-sans",
   subsets: ["latin", "cyrillic"],
+  weight: ["300", "400", "500", "700"],
 });
 
-const display = Cormorant_Garamond({
-  variable: "--font-display",
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600", "700"],
+const armenianSans = Noto_Sans_Armenian({
+  variable: "--font-armenian",
+  subsets: ["armenian"],
+  weight: ["300", "400", "500", "700"],
 });
 
 export const metadata: Metadata = {
@@ -28,7 +29,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${sans.variable} ${display.variable}`}>
+      <body className={`${sans.variable} ${armenianSans.variable}`}>
         <RootExperience>{children}</RootExperience>
       </body>
     </html>

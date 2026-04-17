@@ -40,31 +40,50 @@ export function RevealText({
       return;
     }
 
+    const isHeroText = Boolean(element.closest(".hero-scene, .generic-hero, .brand-detail-hero"));
+    const isHeroTitle = Boolean(
+      element.closest(".hero-scene__title, .generic-hero__title, .brand-detail-hero__title"),
+    );
+    const isHomepageBlock = Boolean(element.closest(".homepage-main"));
+    const resolvedMode =
+      mode === "chars"
+        ? isHeroTitle
+          ? "chars"
+          : "words"
+        : !isHeroText && mode === "words" && children.length > 220
+          ? "lines"
+          : mode;
+
     const split = new SplitType(element, {
-      types: mode,
+      types: resolvedMode,
       tagName: "span",
     });
 
     const targets =
-      mode === "chars" ? split.chars : mode === "lines" ? split.lines : split.words;
+      (resolvedMode === "chars" ? split.chars : resolvedMode === "lines" ? split.lines : split.words) ?? [];
+
+    if (!targets.length) {
+      split.revert();
+      return;
+    }
 
     const animation = gsap.fromTo(
       targets,
       {
-        yPercent: 120,
+        yPercent: isHomepageBlock && resolvedMode !== "chars" ? 136 : 120,
         opacity: 0,
-        rotateX: mode === "chars" ? -50 : -18,
+        rotateX: resolvedMode === "chars" ? -50 : isHomepageBlock ? -16 : -12,
       },
       {
         yPercent: 0,
         opacity: 1,
         rotateX: 0,
-        duration: mode === "chars" ? 0.9 : 1.08,
-        stagger: mode === "chars" ? 0.012 : 0.035,
+        duration: resolvedMode === "chars" ? 0.9 : isHomepageBlock ? 1.02 : 0.92,
+        stagger: resolvedMode === "chars" ? 0.012 : isHomepageBlock ? 0.034 : 0.028,
         ease: "power3.out",
         scrollTrigger: {
           trigger: element,
-          start: "top 85%",
+          start: isHomepageBlock ? "top 88%" : "top 85%",
           once,
         },
       },

@@ -13,10 +13,8 @@ export function MediaScene({ media }: MediaSceneProps) {
     <ScrollScene
       className="media-scene media-scene--homepage"
       preset="homepage"
-      variant="scrub"
       start="top 92%"
-      end="+=520"
-      scrub={0.45}
+      end="bottom 56%"
     >
       <div className="media-scene__header" data-scene-item>
         <RevealText as="p" className="scene-kicker" mode="chars">
@@ -34,6 +32,7 @@ export function MediaScene({ media }: MediaSceneProps) {
               src={card.imageSrc}
               alt={card.title}
               className="media-scene__media"
+              fit="contain"
               sizes="(max-width: 800px) 100vw, 30vw"
               parallax={false}
             />

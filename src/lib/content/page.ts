@@ -1,3 +1,4 @@
+import { getOptimizedAssetSrc } from "@/lib/optimized-media";
 import { normalizeAssetSrc, normalizeRoute } from "@/lib/utils";
 
 import { getHomepageData } from "./home";
@@ -75,7 +76,7 @@ export function getGenericPageData(route: string, localeBase: "/" | "/hy" | "/ru
       const image = firstImage(block.html);
 
       if (image.src) {
-        return [{ type: "image", src: image.src, alt: image.alt || blockText || "Sovrano visual" }];
+        return [{ type: "image", src: getOptimizedAssetSrc(image.src), alt: image.alt || blockText || "Sovrano visual" }];
       }
     }
 
@@ -95,7 +96,7 @@ export function getGenericPageData(route: string, localeBase: "/" | "/hy" | "/ru
     slug: route.split("/").filter(Boolean).at(-1) ?? "page",
     title: page.meta.ogTitle ?? page.meta.title ?? "Sovrano",
     description: page.meta.description ?? "Sovrano Distributions",
-    heroImage: firstVisual?.type === "image" ? firstVisual.src : homepageData.hero.backgroundSrc,
+    heroImage: getOptimizedAssetSrc(firstVisual?.type === "image" ? firstVisual.src : homepageData.hero.backgroundSrc),
     items,
     rawBlocks: page.blocks,
     rawImages: page.images ?? [],

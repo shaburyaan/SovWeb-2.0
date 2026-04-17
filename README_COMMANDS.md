@@ -67,6 +67,8 @@ pushNew "message"
 depSov
 ```
 
+- `depSov` now builds a static Next.js export and uploads `out/` to Cloudflare Pages
+
 ## Notes
 
 - The active runtime is Next.js from repo root.

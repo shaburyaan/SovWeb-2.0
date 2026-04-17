@@ -52,6 +52,12 @@ export function useScrollScene(
     const ctx = gsap.context(() => {
       const targets = scope.querySelectorAll(selector);
       const isHomepage = preset === "homepage";
+      const scrubValue =
+        typeof scrub === "number"
+          ? scrub
+          : scrub
+            ? 0.55
+            : false;
 
       if (!targets.length) {
         return;
@@ -64,9 +70,7 @@ export function useScrollScene(
             start,
             end,
             pin,
-            scrub,
-            invalidateOnRefresh: true,
-            anticipatePin: 1,
+            scrub: scrubValue,
           },
         });
 
@@ -95,17 +99,17 @@ export function useScrollScene(
         targets,
         {
           opacity: 0,
-          y: isHomepage ? 96 : 52,
-          scale: isHomepage ? 0.965 : 0.985,
+          y: isHomepage ? 112 : 52,
+          scale: isHomepage ? 0.955 : 0.985,
           transformOrigin: "50% 50%",
         },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: isHomepage ? 1.2 : 0.95,
+          duration: isHomepage ? 1.28 : 0.95,
           ease: "power3.out",
-          stagger: isHomepage ? 0.08 : 0.06,
+          stagger: isHomepage ? 0.095 : 0.06,
           scrollTrigger: {
             trigger: scope,
             start,

@@ -7,12 +7,28 @@ const fs = require("fs");
 const path = require("path");
 
 async function compressImages() {
-  const uploadsDir = "wp-content/uploads";
+  const sourceRoots = [
+    "wp-content/uploads",
+    "homepage",
+    "caputo",
+    "delverde",
+    "garofalo",
+    "logo",
+    "logo-g",
+    "sacla",
+    "sterilgarda",
+    "virgilio",
+    "public/optimized-media",
+  ];
 
   // Get all image files
   const imageFiles = [];
 
   function findImages(dir) {
+    if (!fs.existsSync(dir)) {
+      return;
+    }
+
     const files = fs.readdirSync(dir);
     for (const file of files) {
       const filePath = path.join(dir, file);
@@ -26,7 +42,9 @@ async function compressImages() {
     }
   }
 
-  findImages(uploadsDir);
+  for (const root of sourceRoots) {
+    findImages(root);
+  }
 
   console.log(`Found ${imageFiles.length} images to compress`);
 

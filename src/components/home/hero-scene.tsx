@@ -10,7 +10,7 @@ type HeroSceneProps = {
 
 export function HeroScene({ hero }: HeroSceneProps) {
   return (
-    <section className="hero-scene">
+    <section className="hero-scene hero-scene--home">
       <div
         className="hero-scene__backdrop"
         style={{ backgroundImage: `url(${hero.backgroundSrc})` }}
@@ -37,7 +37,7 @@ export function HeroScene({ hero }: HeroSceneProps) {
         </RevealText>
 
         <div data-scene-item className="hero-scene__actions">
-          <Magnetic as="span">
+          <Magnetic as="span" strength={0.14}>
             <TransitionLink
               href={hero.ctaHref}
               className="hero-scene__button"
